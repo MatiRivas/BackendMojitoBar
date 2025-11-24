@@ -10,3 +10,4 @@ Quiero realizar pruebas de rendimiento con locust, quiero que me ayudes a instal
 
 Ahora quiero que actúes como un ingeniero de QA y que hagas los unit test para cada uno de los endpoints para así verificar el funcionamiento de estos. 
 
+Necesito un frontend para demostrar el caso de uso ActualizarInventarioUseCase del sistema de gestión de inventario. El backend implementa arquitectura hexagonal con monolito modular usando Node.js, MongoDB, Redis (Pub/Sub) y Socket.IO. El frontend debe permitir actualizar el inventario mediante HTTP y visualizar las notificaciones en tiempo real que se distribuyen vía WebSocket a todos los clientes conectados. 
