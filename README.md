@@ -360,9 +360,7 @@ Respuesta ejemplo:
 ### Paso 2: Actualizar la cantidad del inventario
 
 ```bash
-curl -X POST http://localhost:3001/inventario/actualizar \
-  -H "Content-Type: application/json" \
-  -d '{"inventarioId": "69249b5dce48ce53eafe6e16", "cantidad": 3000}'
+curl -X POST http://localhost:3001/inventario/actualizar -H "Content-Type: application/json" -d "{\"inventarioId\": \"69249b5dce48ce53eafe6e16\", \"cantidad\": 2000}"
 ```
 
 Respuesta:
