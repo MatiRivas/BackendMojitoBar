@@ -12,4 +12,10 @@ const pool = new Pool({
   port: process.env.PG_PORT,
 });
 
-module.exports = pool;
+// Crear un objeto que contenga tanto el pool como el método query
+const postgresClient = {
+  query: (text, params) => pool.query(text, params),
+  pool: pool
+};
+
+module.exports = postgresClient;

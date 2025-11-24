@@ -6,6 +6,7 @@ require('dotenv').config();
 const DependencyContainer = require('./config/dependencyInjection');
 const createInventarioRoutes = require('./modules/inventario/infrastructure/http/inventarioRoutes');
 const createProductoRoutes = require('./modules/producto/infrastructure/http/productoRoutes');
+const createPedidoRoutes = require('./modules/pedido/infrastructure/http/pedidoRoutes');
 const setupWebSocketServer = require('./shared/infrastructure/websocket/socketServer');
 
 async function startServer() {
@@ -35,9 +36,11 @@ async function startServer() {
   // Registrar rutas de módulos
   const inventarioRoutes = createInventarioRoutes(container.get('inventarioController'));
   const productoRoutes = createProductoRoutes(container.get('productoController'));
+  const pedidoRoutes = createPedidoRoutes(container.get('pedidoController'));
 
   app.use('/inventario', inventarioRoutes);
   app.use('/producto', productoRoutes);
+  app.use('/pedido', pedidoRoutes);
 
   // Ruta de health check
   app.get('/health', (req, res) => {
@@ -49,7 +52,7 @@ async function startServer() {
   server.listen(PORT, () => {
     console.log(`🚀 Servidor ejecutándose en puerto ${PORT}`);
     console.log(`📦 Arquitectura: Hexagonal + Monolito Modular`);
-    console.log(`📁 Módulos: Inventario, Producto`);
+    console.log(`📁 Módulos: Inventario, Producto, Pedido`);
   });
 }
 
