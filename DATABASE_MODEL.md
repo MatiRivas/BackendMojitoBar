@@ -38,8 +38,6 @@ erDiagram
         string estado "pendiente, preparando, listo, entregado, cancelado"
         decimal total
         timestamp fecha_hora
-        string mesa
-        text notas
         timestamp created_at
         timestamp updated_at
     }
@@ -51,7 +49,6 @@ erDiagram
         int cantidad
         decimal precio_unitario
         decimal subtotal
-        text notas
         timestamp created_at
     }
     
@@ -75,7 +72,6 @@ erDiagram
         string unidad "ml, gramos, unidades"
         string tipo "Licor, Refresco, Fruta"
         decimal stock_minimo
-        string ubicacion "Barra, Refrigerador"
         timestamp created_at
         timestamp updated_at
     }
@@ -122,14 +118,12 @@ erDiagram
 ### 6. **PEDIDO**
 🧾 Órdenes de los clientes
 - Estados: `pendiente` → `preparando` → `listo` → `entregado` / `cancelado`
-- Mesa asignada
 - Total del pedido
 
 ### 7. **DETALLE_PEDIDO**
 📄 Productos específicos de cada pedido
 - Cantidad de cada trago
 - Precio al momento del pedido
-- Notas especiales
 
 ## 🔍 Consultas Útiles
 
@@ -164,7 +158,6 @@ ORDER BY i.nombre;
 ```sql
 SELECT 
     p.id,
-    p.mesa,
     c.nombre as cliente,
     u.nombre as atendido_por,
     p.estado,
@@ -181,13 +174,11 @@ ORDER BY p.fecha_hora DESC;
 ```sql
 SELECT 
     p.id as pedido_id,
-    p.mesa,
     c.nombre as cliente,
     prod.nombre as producto,
     dp.cantidad,
     dp.precio_unitario,
-    dp.subtotal,
-    dp.notas
+    dp.subtotal
 FROM pedido p
 LEFT JOIN cliente c ON p.cliente_id = c.id
 JOIN detalle_pedido dp ON p.id = dp.pedido_id
@@ -320,14 +311,12 @@ SELECT * FROM vista_resumen_pedidos LIMIT 10;
 
 ```sql
 -- 1. Crear el pedido
-INSERT INTO pedido (cliente_id, usuario_id, estado, total, mesa, notas)
+INSERT INTO pedido (cliente_id, usuario_id, estado, total)
 VALUES (
     1,  -- ID del cliente
     2,  -- ID del usuario (mesero)
     'pendiente',
-    13000,
-    'Mesa 7',
-    'Cliente prefiere poco hielo'
+    13000
 )
 RETURNING id;
 
@@ -376,10 +365,9 @@ WHERE id = 1;
 4. **Stock mínimo**: Alertas automáticas de bajo inventario
 5. **Precio en detalle**: Guarda precio al momento del pedido (por si cambia después)
 6. **Estados del pedido**: Flujo completo desde pendiente hasta entregado
-7. **Notas**: Tanto en pedido como en detalle_pedido para especificaciones
-8. **Triggers**: Actualización automática de timestamps
-9. **Vistas**: Consultas comunes precalculadas
-10. **Índices**: Optimización de búsquedas frecuentes
+7. **Triggers**: Actualización automática de timestamps
+8. **Vistas**: Consultas comunes precalculadas
+9. **Índices**: Optimización de búsquedas frecuentes
 
 ## 🎨 Datos de Ejemplo Incluidos
 

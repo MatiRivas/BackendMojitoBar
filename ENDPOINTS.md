@@ -9,6 +9,7 @@ Base URL: `http://localhost:3000`
 - [Health Check](#-health-check)
 - [Productos](#-productos)
 - [Inventario](#-inventario)
+- [Pedidos](#-pedidos)
 - [Ejemplos con cURL](#-ejemplos-con-curl)
 - [Ejemplos con JavaScript/Fetch](#-ejemplos-con-javascriptfetch)
 - [Códigos de respuesta](#-códigos-de-respuesta)
@@ -296,8 +297,7 @@ GET /inventario/:inventarioId
   "cantidad_disponible": 5000,
   "unidad": "ml",
   "tipo": "Licor",
-  "stock_minimo": 1000,
-  "ubicacion": "Barra"
+  "stock_minimo": 1000
 }
 ```
 
@@ -348,8 +348,7 @@ Content-Type: application/json
     "cantidad_disponible": 4500,
     "unidad": "ml",
     "tipo": "Licor",
-    "stock_minimo": 1000,
-    "ubicacion": "Barra"
+    "stock_minimo": 1000
   }
 }
 ```
@@ -400,6 +399,251 @@ curl -X POST http://localhost:3000/inventario/actualizar \
     "inventarioId": 1,
     "cantidad": 6000
   }'
+```
+
+---
+
+## 🧾 Pedidos
+
+### 1. Crear nuevo pedido
+
+```http
+POST /pedido
+Content-Type: application/json
+```
+
+**Body (JSON):**
+```json
+{
+  "usuario_id": 2,
+  "cliente_id": 1,
+  "productos": [
+    {
+      "producto_id": 1,
+      "cantidad": 2
+    },
+    {
+      "producto_id": 2,
+      "cantidad": 1
+    }
+  ]
+}
+```
+
+**Campos:**
+- `usuario_id` (number, requerido) - ID del usuario que registra el pedido
+- `cliente_id` (number, opcional) - ID del cliente
+- `productos` (array, requerido) - Lista de productos a pedir
+  - `producto_id` (number, requerido) - ID del producto
+  - `cantidad` (number, requerido) - Cantidad del producto
+
+**Respuesta exitosa (201):**
+```json
+{
+  "id": 4,
+  "cliente_id": 1,
+  "usuario_id": 2,
+  "estado": "pendiente",
+  "total": 17500,
+  "fecha_hora": "2025-11-24T02:30:00.000Z",
+  "detalles": [
+    {
+      "id": 7,
+      "pedido_id": 4,
+      "producto_id": 1,
+      "cantidad": 2,
+      "precio_unitario": 6500,
+      "subtotal": 13000
+    },
+    {
+      "id": 8,
+      "pedido_id": 4,
+      "producto_id": 2,
+      "cantidad": 1,
+      "precio_unitario": 4500,
+      "subtotal": 4500
+    }
+  ]
+}
+```
+
+**Respuesta error (400):**
+```json
+{
+  "error": "El usuario_id es requerido"
+}
+```
+
+**Ejemplo:**
+```bash
+curl -X POST http://localhost:3000/pedido \
+  -H "Content-Type: application/json" \
+  -d '{
+    "usuario_id": 2,
+    "productos": [
+      {"producto_id": 1, "cantidad": 2},
+      {"producto_id": 2, "cantidad": 1}
+    ]
+  }'
+```
+
+---
+
+### 2. Listar todos los pedidos
+
+```http
+GET /pedido
+```
+
+**Query Parameters (opcionales):**
+- `estado` (string) - Filtrar por estado: `pendiente`, `preparando`, `listo`, `entregado`, `cancelado`
+
+**Respuesta exitosa (200):**
+```json
+[
+  {
+    "id": 4,
+    "cliente_id": 1,
+    "usuario_id": 2,
+    "estado": "pendiente",
+    "total": 17500,
+    "fecha_hora": "2025-11-24T02:30:00.000Z",
+    "detalles": [],
+    "clienteNombre": "Carlos Pérez",
+    "usuarioNombre": "Juan Mesero"
+  }
+]
+```
+
+**Ejemplos:**
+```bash
+# Listar todos los pedidos
+curl http://localhost:3000/pedido
+
+# Listar solo pedidos pendientes
+curl "http://localhost:3000/pedido?estado=pendiente"
+
+# Listar pedidos en preparación
+curl "http://localhost:3000/pedido?estado=preparando"
+```
+
+---
+
+### 3. Obtener pedido por ID
+
+```http
+GET /pedido/:id
+```
+
+**Parámetros:**
+- `id` (number) - ID del pedido
+
+**Respuesta exitosa (200):**
+```json
+{
+  "id": 4,
+  "cliente_id": 1,
+  "usuario_id": 2,
+  "estado": "pendiente",
+  "total": 17500,
+  "fecha_hora": "2025-11-24T02:30:00.000Z",
+  "detalles": [
+    {
+      "id": 7,
+      "pedido_id": 4,
+      "producto_id": 1,
+      "cantidad": 2,
+      "precio_unitario": 6500,
+      "subtotal": 13000,
+      "productoNombre": "Mojito"
+    },
+    {
+      "id": 8,
+      "pedido_id": 4,
+      "producto_id": 2,
+      "cantidad": 1,
+      "precio_unitario": 4500,
+      "subtotal": 4500,
+      "productoNombre": "Piscola"
+    }
+  ]
+}
+```
+
+**Respuesta error (404):**
+```json
+{
+  "error": "Pedido con id 999 no encontrado"
+}
+```
+
+**Ejemplo:**
+```bash
+curl http://localhost:3000/pedido/4
+```
+
+---
+
+### 4. Actualizar estado del pedido
+
+```http
+PATCH /pedido/:id/estado
+Content-Type: application/json
+```
+
+**Parámetros:**
+- `id` (number) - ID del pedido
+
+**Body (JSON):**
+```json
+{
+  "estado": "preparando"
+}
+```
+
+**Estados válidos:**
+- `pendiente` - Pedido recibido, esperando preparación
+- `preparando` - Bartender está preparando los tragos
+- `listo` - Pedido listo para entrega
+- `entregado` - Pedido entregado al cliente
+- `cancelado` - Pedido cancelado
+
+**Respuesta exitosa (200):**
+```json
+{
+  "id": 4,
+  "cliente_id": 1,
+  "usuario_id": 2,
+  "estado": "preparando",
+  "total": 17500,
+  "fecha_hora": "2025-11-24T02:30:00.000Z",
+  "detalles": []
+}
+```
+
+**Respuesta error (400):**
+```json
+{
+  "error": "Estado inválido: invalido"
+}
+```
+
+**Ejemplos:**
+```bash
+# Marcar como preparando
+curl -X PATCH http://localhost:3000/pedido/4/estado \
+  -H "Content-Type: application/json" \
+  -d '{"estado": "preparando"}'
+
+# Marcar como listo
+curl -X PATCH http://localhost:3000/pedido/4/estado \
+  -H "Content-Type: application/json" \
+  -d '{"estado": "listo"}'
+
+# Marcar como entregado
+curl -X PATCH http://localhost:3000/pedido/4/estado \
+  -H "Content-Type: application/json" \
+  -d '{"estado": "entregado"}'
 ```
 
 ---

@@ -75,7 +75,6 @@ CREATE TABLE IF NOT EXISTS inventario (
     unidad VARCHAR(50) NOT NULL,
     tipo VARCHAR(100),
     stock_minimo DECIMAL(10, 3) DEFAULT 10,
-    ubicacion VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -110,8 +109,6 @@ CREATE TABLE IF NOT EXISTS pedido (
     estado VARCHAR(50) NOT NULL DEFAULT 'pendiente' CHECK (estado IN ('pendiente', 'preparando', 'listo', 'entregado', 'cancelado')),
     total DECIMAL(10, 2) NOT NULL DEFAULT 0 CHECK (total >= 0),
     fecha_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    mesa VARCHAR(20),
-    notas TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -132,7 +129,6 @@ CREATE TABLE IF NOT EXISTS detalle_pedido (
     cantidad INTEGER NOT NULL CHECK (cantidad > 0),
     precio_unitario DECIMAL(10, 2) NOT NULL CHECK (precio_unitario > 0),
     subtotal DECIMAL(10, 2) NOT NULL CHECK (subtotal >= 0),
-    notas TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -194,17 +190,17 @@ ON CONFLICT (email) DO NOTHING;
 -- ========================================
 -- DATOS DE EJEMPLO - INVENTARIO (Ingredientes)
 -- ========================================
-INSERT INTO inventario (nombre, cantidad_disponible, unidad, tipo, stock_minimo, ubicacion) VALUES
-    ('Ron Blanco', 5000, 'ml', 'Licor', 1000, 'Barra'),
-    ('Coca-Cola', 10000, 'ml', 'Refresco', 2000, 'Refrigerador'),
-    ('Pisco', 3000, 'ml', 'Licor', 500, 'Barra'),
-    ('Limón', 50, 'unidades', 'Fruta', 10, 'Refrigerador'),
-    ('Menta', 100, 'hojas', 'Hierba', 20, 'Refrigerador'),
-    ('Hielo', 20000, 'gramos', 'Hielo', 5000, 'Congelador'),
-    ('Agua con Gas', 5000, 'ml', 'Refresco', 1000, 'Refrigerador'),
-    ('Azúcar', 2000, 'gramos', 'Endulzante', 500, 'Despensa'),
-    ('Vodka', 2000, 'ml', 'Licor', 500, 'Barra'),
-    ('Jugo de Naranja', 3000, 'ml', 'Jugo', 500, 'Refrigerador')
+INSERT INTO inventario (nombre, cantidad_disponible, unidad, tipo, stock_minimo) VALUES
+    ('Ron Blanco', 5000, 'ml', 'Licor', 1000),
+    ('Coca-Cola', 10000, 'ml', 'Refresco', 2000),
+    ('Pisco', 3000, 'ml', 'Licor', 500),
+    ('Limón', 50, 'unidades', 'Fruta', 10),
+    ('Menta', 100, 'hojas', 'Hierba', 20),
+    ('Hielo', 20000, 'gramos', 'Hielo', 5000),
+    ('Agua con Gas', 5000, 'ml', 'Refresco', 1000),
+    ('Azúcar', 2000, 'gramos', 'Endulzante', 500),
+    ('Vodka', 2000, 'ml', 'Licor', 500),
+    ('Jugo de Naranja', 3000, 'ml', 'Jugo', 500)
 ON CONFLICT DO NOTHING;
 
 -- ========================================
@@ -284,14 +280,12 @@ ON CONFLICT DO NOTHING;
 -- ========================================
 
 -- Pedido 1: Cliente Carlos, Mesero Juan
-INSERT INTO pedido (cliente_id, usuario_id, estado, total, mesa, notas)
+INSERT INTO pedido (cliente_id, usuario_id, estado, total)
 SELECT 
     (SELECT id FROM cliente WHERE nombre = 'Carlos Pérez'),
     (SELECT id FROM usuario WHERE nombre = 'Juan Mesero'),
     'entregado',
-    11000,
-    'Mesa 5',
-    'Sin hielo en el Mojito'
+    11000
 ON CONFLICT DO NOTHING;
 
 -- Detalles del Pedido 1
@@ -311,29 +305,27 @@ WHERE p.nombre = d.producto_nombre
 ON CONFLICT DO NOTHING;
 
 -- Pedido 2: Cliente Ana, Mesero Juan
-INSERT INTO pedido (cliente_id, usuario_id, estado, total, mesa)
+INSERT INTO pedido (cliente_id, usuario_id, estado, total)
 SELECT 
     (SELECT id FROM cliente WHERE nombre = 'Ana López'),
     (SELECT id FROM usuario WHERE nombre = 'Juan Mesero'),
     'preparando',
-    13000,
-    'Mesa 3'
+    13000
 ON CONFLICT DO NOTHING;
 
 -- Detalles del Pedido 2
-INSERT INTO detalle_pedido (pedido_id, producto_id, cantidad, precio_unitario, subtotal, notas)
+INSERT INTO detalle_pedido (pedido_id, producto_id, cantidad, precio_unitario, subtotal)
 SELECT 
     (SELECT id FROM pedido ORDER BY id DESC LIMIT 1),
     p.id,
     d.cantidad,
     p.precio,
-    p.precio * d.cantidad,
-    d.notas
+    p.precio * d.cantidad
 FROM producto p
 CROSS JOIN (VALUES 
-    ('Ron Cola', 2, NULL),
-    ('Piscola', 1, 'Con extra de limón')
-) AS d(producto_nombre, cantidad, notas)
+    ('Ron Cola', 2),
+    ('Piscola', 1)
+) AS d(producto_nombre, cantidad)
 WHERE p.nombre = d.producto_nombre
 ON CONFLICT DO NOTHING;
 
@@ -376,7 +368,6 @@ SELECT
     p.fecha_hora,
     c.nombre as cliente,
     u.nombre as atendido_por,
-    p.mesa,
     p.estado,
     p.total,
     COUNT(dp.id) as cantidad_productos

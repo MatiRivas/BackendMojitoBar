@@ -31,6 +31,18 @@ const EliminarProductoUseCase = require('../modules/producto/application/usecase
 // Módulo Producto - Controlador
 const ProductoController = require('../modules/producto/infrastructure/http/ProductoController');
 
+// Módulo Pedido - Adaptadores
+const PostgresPedidoRepository = require('../modules/pedido/infrastructure/adapters/PostgresPedidoRepository');
+
+// Módulo Pedido - Casos de uso
+const CrearPedidoUseCase = require('../modules/pedido/application/usecases/CrearPedidoUseCase');
+const ObtenerPedidosUseCase = require('../modules/pedido/application/usecases/ObtenerPedidosUseCase');
+const ObtenerPedidoPorIdUseCase = require('../modules/pedido/application/usecases/ObtenerPedidoPorIdUseCase');
+const ActualizarEstadoPedidoUseCase = require('../modules/pedido/application/usecases/ActualizarEstadoPedidoUseCase');
+
+// Módulo Pedido - Controlador
+const PedidoController = require('../modules/pedido/infrastructure/http/PedidoController');
+
 class DependencyContainer {
   constructor() {
     this.dependencies = {};
@@ -78,6 +90,31 @@ class DependencyContainer {
       eliminarProductoUseCase
     );
 
+    // ==================== MÓDULO PEDIDO ====================
+    // Adaptadores
+    const pedidoRepository = new PostgresPedidoRepository(postgresClient);
+
+    // Casos de uso
+    const crearPedidoUseCase = new CrearPedidoUseCase(
+      pedidoRepository,
+      productoRepository,
+      eventPublisher
+    );
+    const obtenerPedidosUseCase = new ObtenerPedidosUseCase(pedidoRepository);
+    const obtenerPedidoPorIdUseCase = new ObtenerPedidoPorIdUseCase(pedidoRepository);
+    const actualizarEstadoPedidoUseCase = new ActualizarEstadoPedidoUseCase(
+      pedidoRepository,
+      eventPublisher
+    );
+
+    // Controlador
+    const pedidoController = new PedidoController(
+      crearPedidoUseCase,
+      obtenerPedidosUseCase,
+      obtenerPedidoPorIdUseCase,
+      actualizarEstadoPedidoUseCase
+    );
+
     // Guardar en el contenedor
     this.dependencies = {
       // Infraestructura
@@ -90,6 +127,9 @@ class DependencyContainer {
       
       // Módulo Producto
       productoController,
+
+      // Módulo Pedido
+      pedidoController,
     };
 
     return this.dependencies;

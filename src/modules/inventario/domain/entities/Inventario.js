@@ -1,12 +1,11 @@
 class Inventario {
-  constructor(id, nombre, cantidadDisponible, unidad, tipo, stockMinimo, ubicacion) {
+  constructor(id, nombre, cantidadDisponible, unidad, tipo, stockMinimo) {
     this.id = id;
     this.nombre = nombre;
     this.cantidadDisponible = cantidadDisponible;
     this.unidad = unidad;
     this.tipo = tipo;
     this.stockMinimo = stockMinimo;
-    this.ubicacion = ubicacion;
   }
 
   actualizarCantidad(nuevaCantidad) {
@@ -27,8 +26,7 @@ class Inventario {
       parseFloat(data.cantidad_disponible),
       data.unidad,
       data.tipo,
-      parseFloat(data.stock_minimo),
-      data.ubicacion
+      parseFloat(data.stock_minimo)
     );
   }
 
@@ -40,7 +38,6 @@ class Inventario {
       unidad: this.unidad,
       tipo: this.tipo,
       stock_minimo: this.stockMinimo,
-      ubicacion: this.ubicacion,
     };
   }
 }
