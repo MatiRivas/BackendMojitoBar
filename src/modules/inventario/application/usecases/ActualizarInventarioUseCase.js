@@ -17,7 +17,7 @@ class ActualizarInventarioUseCase {
     }
 
     // Aplicar lógica de dominio
-    const cantidadAnterior = inventario.cantidad;
+    const cantidadAnterior = inventario.cantidadDisponible;
     inventario.actualizarCantidad(nuevaCantidad);
 
     // Persistir cambios
@@ -27,9 +27,11 @@ class ActualizarInventarioUseCase {
     if (this.eventPublisher) {
       await this.eventPublisher.publish('inventario_actualizado', {
         inventarioId: inventario.id,
-        productoId: inventario.productoId,
+        nombre: inventario.nombre,
         cantidadAnterior,
-        cantidadNueva: inventario.cantidad,
+        cantidadNueva: inventario.cantidadDisponible,
+        unidad: inventario.unidad,
+        bajoStock: inventario.esBajoStock(),
         timestamp: new Date().toISOString(),
       });
     }

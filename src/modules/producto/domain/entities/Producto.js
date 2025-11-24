@@ -27,10 +27,10 @@ class Producto {
     return new Producto(
       data.id,
       data.nombre,
-      data.precio,
+      parseFloat(data.precio),
       data.categoria,
       data.disponibilidad,
-      data.tiempo_preparacion_estimado
+      parseInt(data.tiempo_preparacion_estimado) || 0
     );
   }
 
@@ -38,7 +38,7 @@ class Producto {
     return {
       id: this.id,
       nombre: this.nombre,
-      precio: this.precio,
+      precio: parseFloat(this.precio),
       categoria: this.categoria,
       disponibilidad: this.disponibilidad,
       tiempo_preparacion_estimado: this.tiempoPreparacionEstimado,

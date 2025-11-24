@@ -51,7 +51,11 @@ class PostgresProductoRepository extends ProductoRepository {
     const primitives = producto.toPrimitives();
     const result = await this.client.query(
       `UPDATE producto 
-       SET nombre = $1, precio = $2, categoria = $3, disponibilidad = $4, tiempo_preparacion_estimado = $5
+       SET nombre = COALESCE($1, nombre), 
+           precio = COALESCE($2, precio), 
+           categoria = COALESCE($3, categoria), 
+           disponibilidad = COALESCE($4, disponibilidad), 
+           tiempo_preparacion_estimado = COALESCE($5, tiempo_preparacion_estimado)
        WHERE id = $6
        RETURNING *`,
       [

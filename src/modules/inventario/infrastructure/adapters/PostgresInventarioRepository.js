@@ -27,10 +27,17 @@ class PostgresInventarioRepository extends InventarioRepository {
   async save(inventario) {
     const primitives = inventario.toPrimitives();
     const result = await this.client.query(
-      `INSERT INTO inventario (producto_id, cantidad, ubicacion, fecha_actualizacion)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO inventario (nombre, cantidad_disponible, unidad, tipo, stock_minimo, ubicacion)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [primitives.producto_id, primitives.cantidad, primitives.ubicacion, primitives.fecha_actualizacion]
+      [
+        primitives.nombre,
+        primitives.cantidad_disponible,
+        primitives.unidad,
+        primitives.tipo,
+        primitives.stock_minimo,
+        primitives.ubicacion
+      ]
     );
 
     return Inventario.fromPrimitives(result.rows[0]);
@@ -40,10 +47,10 @@ class PostgresInventarioRepository extends InventarioRepository {
     const primitives = inventario.toPrimitives();
     const result = await this.client.query(
       `UPDATE inventario 
-       SET cantidad = $1, fecha_actualizacion = $2
-       WHERE id = $3
+       SET cantidad_disponible = $1
+       WHERE id = $2
        RETURNING *`,
-      [primitives.cantidad, primitives.fecha_actualizacion, primitives.id]
+      [primitives.cantidad_disponible, primitives.id]
     );
 
     if (result.rows.length === 0) {

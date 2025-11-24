@@ -1,41 +1,46 @@
 class Inventario {
-  constructor(id, productoId, cantidad, ubicacion, fechaActualizacion = new Date()) {
+  constructor(id, nombre, cantidadDisponible, unidad, tipo, stockMinimo, ubicacion) {
     this.id = id;
-    this.productoId = productoId;
-    this.cantidad = cantidad;
+    this.nombre = nombre;
+    this.cantidadDisponible = cantidadDisponible;
+    this.unidad = unidad;
+    this.tipo = tipo;
+    this.stockMinimo = stockMinimo;
     this.ubicacion = ubicacion;
-    this.fechaActualizacion = fechaActualizacion;
   }
 
   actualizarCantidad(nuevaCantidad) {
     if (nuevaCantidad < 0) {
       throw new Error('La cantidad no puede ser negativa');
     }
-    this.cantidad = nuevaCantidad;
-    this.fechaActualizacion = new Date();
+    this.cantidadDisponible = nuevaCantidad;
   }
 
-  esBajoStock(minimoStock = 10) {
-    return this.cantidad < minimoStock;
+  esBajoStock() {
+    return this.cantidadDisponible < this.stockMinimo;
   }
 
   static fromPrimitives(data) {
     return new Inventario(
       data.id,
-      data.producto_id,
-      data.cantidad,
-      data.ubicacion,
-      data.fecha_actualizacion
+      data.nombre,
+      parseFloat(data.cantidad_disponible),
+      data.unidad,
+      data.tipo,
+      parseFloat(data.stock_minimo),
+      data.ubicacion
     );
   }
 
   toPrimitives() {
     return {
       id: this.id,
-      producto_id: this.productoId,
-      cantidad: this.cantidad,
+      nombre: this.nombre,
+      cantidad_disponible: this.cantidadDisponible,
+      unidad: this.unidad,
+      tipo: this.tipo,
+      stock_minimo: this.stockMinimo,
       ubicacion: this.ubicacion,
-      fecha_actualizacion: this.fechaActualizacion,
     };
   }
 }

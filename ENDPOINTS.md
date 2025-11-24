@@ -51,19 +51,19 @@ GET /producto
 [
   {
     "id": 1,
-    "nombre": "Café Americano",
-    "precio": "2.50",
-    "categoria": "Bebidas",
+    "nombre": "Mojito",
+    "precio": 6500,
+    "categoria": "Cocteles",
     "disponibilidad": true,
     "tiempo_preparacion_estimado": 5
   },
   {
     "id": 2,
-    "nombre": "Cappuccino",
-    "precio": "3.50",
-    "categoria": "Bebidas",
+    "nombre": "Piscola",
+    "precio": 4500,
+    "categoria": "Tragos Largos",
     "disponibilidad": true,
-    "tiempo_preparacion_estimado": 7
+    "tiempo_preparacion_estimado": 2
   }
 ]
 ```
@@ -88,9 +88,9 @@ GET /producto/:id
 ```json
 {
   "id": 1,
-  "nombre": "Café Americano",
-  "precio": "2.50",
-  "categoria": "Bebidas",
+  "nombre": "Mojito",
+  "precio": 6500,
+  "categoria": "Cocteles",
   "disponibilidad": true,
   "tiempo_preparacion_estimado": 5
 }
@@ -124,11 +124,11 @@ Content-Type: application/json
 **Body (JSON):**
 ```json
 {
-  "nombre": "Café Latte",
-  "precio": 3.75,
-  "categoria": "Bebidas",
+  "nombre": "Cuba Libre",
+  "precio": 5000,
+  "categoria": "Tragos Largos",
   "disponibilidad": true,
-  "tiempo_preparacion_estimado": 6
+  "tiempo_preparacion_estimado": 3
 }
 ```
 
@@ -142,12 +142,12 @@ Content-Type: application/json
 **Respuesta exitosa (201):**
 ```json
 {
-  "id": 6,
-  "nombre": "Café Latte",
-  "precio": "3.75",
-  "categoria": "Bebidas",
+  "id": 8,
+  "nombre": "Cuba Libre",
+  "precio": 5000,
+  "categoria": "Tragos Largos",
   "disponibilidad": true,
-  "tiempo_preparacion_estimado": 6
+  "tiempo_preparacion_estimado": 3
 }
 ```
 
@@ -163,11 +163,11 @@ Content-Type: application/json
 curl -X POST http://localhost:3000/producto \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Té Verde",
-    "precio": 2.50,
-    "categoria": "Bebidas",
+    "nombre": "Margarita",
+    "precio": 6800,
+    "categoria": "Cocteles",
     "disponibilidad": true,
-    "tiempo_preparacion_estimado": 4
+    "tiempo_preparacion_estimado": 5
   }'
 ```
 
@@ -186,9 +186,9 @@ Content-Type: application/json
 **Body (JSON) - Todos los campos son opcionales:**
 ```json
 {
-  "nombre": "Café Americano Premium",
-  "precio": 2.99,
-  "categoria": "Bebidas Premium",
+  "nombre": "Mojito Premium",
+  "precio": 7500,
+  "categoria": "Cocteles Premium",
   "disponibilidad": false,
   "tiempo_preparacion_estimado": 8
 }
@@ -198,9 +198,9 @@ Content-Type: application/json
 ```json
 {
   "id": 1,
-  "nombre": "Café Americano Premium",
-  "precio": "2.99",
-  "categoria": "Bebidas Premium",
+  "nombre": "Mojito Premium",
+  "precio": 7500,
+  "categoria": "Cocteles Premium",
   "disponibilidad": false,
   "tiempo_preparacion_estimado": 8
 }
@@ -225,13 +225,13 @@ Content-Type: application/json
 # Actualizar solo el precio
 curl -X PUT http://localhost:3000/producto/1 \
   -H "Content-Type: application/json" \
-  -d '{"precio": 2.99}'
+  -d '{"precio": 7000}'
 
 # Actualizar nombre y disponibilidad
 curl -X PUT http://localhost:3000/producto/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Café Americano Grande",
+    "nombre": "Mojito Especial",
     "disponibilidad": true
   }'
 
@@ -239,11 +239,11 @@ curl -X PUT http://localhost:3000/producto/1 \
 curl -X PUT http://localhost:3000/producto/1 \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Espresso Doble",
-    "precio": 4.50,
-    "categoria": "Bebidas",
+    "nombre": "Mojito Premium",
+    "precio": 7500,
+    "categoria": "Cocteles",
     "disponibilidad": true,
-    "tiempo_preparacion_estimado": 10
+    "tiempo_preparacion_estimado": 6
   }'
 ```
 
@@ -292,10 +292,12 @@ GET /inventario/:inventarioId
 ```json
 {
   "id": 1,
-  "producto_id": 2,
-  "cantidad": 100,
-  "ubicacion": "Almacén Principal",
-  "fecha_actualizacion": "2025-11-22T16:03:31.948Z"
+  "nombre": "Ron Blanco",
+  "cantidad_disponible": 5000,
+  "unidad": "ml",
+  "tipo": "Licor",
+  "stock_minimo": 1000,
+  "ubicacion": "Barra"
 }
 ```
 
@@ -342,10 +344,12 @@ Content-Type: application/json
   "mensaje": "Inventario actualizado",
   "data": {
     "id": 1,
-    "producto_id": 2,
-    "cantidad": 75,
-    "ubicacion": "Almacén Principal",
-    "fecha_actualizacion": "2025-11-22T16:30:00.000Z"
+    "nombre": "Ron Blanco",
+    "cantidad_disponible": 4500,
+    "unidad": "ml",
+    "tipo": "Licor",
+    "stock_minimo": 1000,
+    "ubicacion": "Barra"
   }
 }
 ```
@@ -378,7 +382,7 @@ curl -X POST http://localhost:3000/inventario/actualizar \
   -H "Content-Type: application/json" \
   -d '{
     "inventarioId": 1,
-    "cantidad": 50
+    "cantidad": 4500
   }'
 
 # Actualizar a 0 (agotado)
@@ -394,7 +398,7 @@ curl -X POST http://localhost:3000/inventario/actualizar \
   -H "Content-Type: application/json" \
   -d '{
     "inventarioId": 1,
-    "cantidad": 200
+    "cantidad": 6000
   }'
 ```
 
@@ -425,18 +429,18 @@ echo "=== 4. Crear nuevo producto ==="
 curl -X POST $BASE_URL/producto \
   -H "Content-Type: application/json" \
   -d '{
-    "nombre": "Mocha",
-    "precio": 4.00,
-    "categoria": "Bebidas",
+    "nombre": "Margarita",
+    "precio": 6800,
+    "categoria": "Cocteles",
     "disponibilidad": true,
-    "tiempo_preparacion_estimado": 7
+    "tiempo_preparacion_estimado": 5
   }'
 echo -e "\n"
 
 echo "=== 5. Actualizar producto 1 ==="
 curl -X PUT $BASE_URL/producto/1 \
   -H "Content-Type: application/json" \
-  -d '{"precio": 2.75}'
+  -d '{"precio": 7000}'
 echo -e "\n"
 
 echo "=== 6. Obtener inventario 1 ==="
@@ -448,12 +452,12 @@ curl -X POST $BASE_URL/inventario/actualizar \
   -H "Content-Type: application/json" \
   -d '{
     "inventarioId": 1,
-    "cantidad": 60
+    "cantidad": 4800
   }'
 echo -e "\n"
 
-echo "=== 8. Eliminar producto 6 ==="
-curl -X DELETE $BASE_URL/producto/6
+echo "=== 8. Eliminar producto 8 ==="
+curl -X DELETE $BASE_URL/producto/8
 echo -e "\n"
 ```
 
@@ -491,11 +495,11 @@ fetch('http://localhost:3000/producto', {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    nombre: 'Café Latte',
-    precio: 3.75,
-    categoria: 'Bebidas',
+    nombre: 'Margarita',
+    precio: 6800,
+    categoria: 'Cocteles',
     disponibilidad: true,
-    tiempo_preparacion_estimado: 6
+    tiempo_preparacion_estimado: 5
   })
 })
   .then(res => res.json())
@@ -511,7 +515,7 @@ fetch(`http://localhost:3000/producto/${productoId}`, {
     'Content-Type': 'application/json'
   },
   body: JSON.stringify({
-    precio: 2.99,
+    precio: 7000,
     disponibilidad: true
   })
 })
@@ -549,7 +553,7 @@ fetch('http://localhost:3000/inventario/actualizar', {
   },
   body: JSON.stringify({
     inventarioId: 1,
-    cantidad: 75
+    cantidad: 4500
   })
 })
   .then(res => res.json())
@@ -584,7 +588,7 @@ fetch('http://localhost:3000/inventario/actualizar', {
 ```json
 {
   "info": {
-    "name": "API Hexagonal",
+    "name": "Mojito Bar API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -609,7 +613,7 @@ fetch('http://localhost:3000/inventario/actualizar', {
         "header": [{"key": "Content-Type", "value": "application/json"}],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Café Latte\",\n  \"precio\": 3.75,\n  \"categoria\": \"Bebidas\",\n  \"disponibilidad\": true,\n  \"tiempo_preparacion_estimado\": 6\n}"
+          "raw": "{\n  \"nombre\": \"Margarita\",\n  \"precio\": 6800,\n  \"categoria\": \"Cocteles\",\n  \"disponibilidad\": true,\n  \"tiempo_preparacion_estimado\": 5\n}"
         },
         "url": "http://localhost:3000/producto"
       }
