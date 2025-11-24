@@ -70,7 +70,8 @@ class DependencyContainer {
     // Controlador (adaptador de entrada HTTP)
     const inventarioController = new InventarioController(
       actualizarInventarioUseCase,
-      obtenerInventarioUseCase
+      obtenerInventarioUseCase,
+      inventarioRepository
     );
 
     // ==================== MÓDULO PRODUCTO ====================

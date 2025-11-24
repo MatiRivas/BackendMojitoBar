@@ -3,9 +3,10 @@
  * Maneja requests HTTP y delega a los casos de uso
  */
 class InventarioController {
-  constructor(actualizarInventarioUseCase, obtenerInventarioUseCase) {
+  constructor(actualizarInventarioUseCase, obtenerInventarioUseCase, inventarioRepository) {
     this.actualizarInventarioUseCase = actualizarInventarioUseCase;
     this.obtenerInventarioUseCase = obtenerInventarioUseCase;
+    this.inventarioRepository = inventarioRepository;
   }
 
   async actualizar(req, res) {
@@ -48,6 +49,16 @@ class InventarioController {
       console.error('Error obteniendo inventario:', error);
       const statusCode = error.message.includes('no encontrado') ? 404 : 500;
       res.status(statusCode).json({ error: error.message });
+    }
+  }
+
+  async listarTodos(req, res) {
+    try {
+      const inventarios = await this.inventarioRepository.findAll();
+      res.status(200).json(inventarios.map(inv => inv.toPrimitives()));
+    } catch (error) {
+      console.error('Error listando inventarios:', error);
+      res.status(500).json({ error: error.message });
     }
   }
 }
