@@ -11,8 +11,7 @@
     "test": "jest --testPathIgnorePatterns=inventarioService.test.js --testPathIgnorePatterns=socket.test.js",
     "test:coverage": "jest --coverage --testPathIgnorePatterns=inventarioService.test.js --testPathIgnorePatterns=socket.test.js",
     "test:watch": "jest --watch --testPathIgnorePatterns=inventarioService.test.js --testPathIgnorePatterns=socket.test.js",
-    "db:setup": "psql -U chupacarrillo -d llm -f database/schema.sql",
-    "db:reset": "psql -U chupacarrillo -d postgres -c 'DROP DATABASE IF EXISTS llm' && psql -U chupacarrillo -d postgres -c 'CREATE DATABASE llm' && npm run db:setup",
+    "db:migrate": "node database/migrate-postgres-to-mongo.js",
     "test:api": "./test-api.sh"
   },
   "keywords": [],
@@ -24,12 +23,13 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "http": "^0.0.1-security",
-    "pg": "^8.16.3",
+    "mongodb": "^6.10.0",
     "redis": "^5.10.0",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
     "jest": "^30.2.0",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "pg": "^8.16.3"
   }
 }

@@ -37,10 +37,10 @@ class PedidoController {
 
   async obtenerPorId(req, res) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID debe ser un número' });
+      if (!id || id.trim() === '') {
+        return res.status(400).json({ error: 'ID es requerido' });
       }
 
       const pedido = await this.obtenerPedidoPorIdUseCase.execute(id);
@@ -54,11 +54,11 @@ class PedidoController {
 
   async actualizarEstado(req, res) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const { estado } = req.body;
 
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID debe ser un número' });
+      if (!id || id.trim() === '') {
+        return res.status(400).json({ error: 'ID es requerido' });
       }
 
       if (!estado) {

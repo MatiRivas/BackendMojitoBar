@@ -28,10 +28,10 @@ class ProductoController {
 
   async obtenerPorId(req, res) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID debe ser un número' });
+      if (!id || id.trim() === '') {
+        return res.status(400).json({ error: 'ID es requerido' });
       }
 
       const producto = await this.obtenerProductoPorIdUseCase.execute(id);
@@ -55,10 +55,10 @@ class ProductoController {
 
   async actualizar(req, res) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID debe ser un número' });
+      if (!id || id.trim() === '') {
+        return res.status(400).json({ error: 'ID es requerido' });
       }
 
       const productoActualizado = await this.actualizarProductoUseCase.execute(id, req.body);
@@ -72,10 +72,10 @@ class ProductoController {
 
   async eliminar(req, res) {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       
-      if (isNaN(id)) {
-        return res.status(400).json({ error: 'ID debe ser un número' });
+      if (!id || id.trim() === '') {
+        return res.status(400).json({ error: 'ID es requerido' });
       }
 
       await this.eliminarProductoUseCase.execute(id);

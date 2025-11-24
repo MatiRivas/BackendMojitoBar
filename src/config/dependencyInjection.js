@@ -4,11 +4,11 @@
  */
 
 // Shared infrastructure
-const postgresClient = require('../shared/infrastructure/database/postgresClient');
+const mongoClient = require('../shared/infrastructure/database/mongoClient');
 const { getRedisClient } = require('../shared/infrastructure/events/redisClient');
 
 // Módulo Inventario - Adaptadores
-const PostgresInventarioRepository = require('../modules/inventario/infrastructure/adapters/PostgresInventarioRepository');
+const MongoInventarioRepository = require('../modules/inventario/infrastructure/adapters/MongoInventarioRepository');
 const RedisEventPublisher = require('../modules/inventario/infrastructure/adapters/RedisEventPublisher');
 
 // Módulo Inventario - Casos de uso
@@ -19,7 +19,7 @@ const ObtenerInventarioUseCase = require('../modules/inventario/application/usec
 const InventarioController = require('../modules/inventario/infrastructure/http/InventarioController');
 
 // Módulo Producto - Adaptadores
-const PostgresProductoRepository = require('../modules/producto/infrastructure/adapters/PostgresProductoRepository');
+const MongoProductoRepository = require('../modules/producto/infrastructure/adapters/MongoProductoRepository');
 
 // Módulo Producto - Casos de uso
 const CrearProductoUseCase = require('../modules/producto/application/usecases/CrearProductoUseCase');
@@ -32,7 +32,7 @@ const EliminarProductoUseCase = require('../modules/producto/application/usecase
 const ProductoController = require('../modules/producto/infrastructure/http/ProductoController');
 
 // Módulo Pedido - Adaptadores
-const PostgresPedidoRepository = require('../modules/pedido/infrastructure/adapters/PostgresPedidoRepository');
+const MongoPedidoRepository = require('../modules/pedido/infrastructure/adapters/MongoPedidoRepository');
 
 // Módulo Pedido - Casos de uso
 const CrearPedidoUseCase = require('../modules/pedido/application/usecases/CrearPedidoUseCase');
@@ -49,12 +49,15 @@ class DependencyContainer {
   }
 
   async initialize() {
+    // Conectar a MongoDB
+    await mongoClient.connect();
+    
     // Infraestructura compartida
     const redisClient = await getRedisClient();
     
     // ==================== MÓDULO INVENTARIO ====================
     // Adaptadores (implementaciones de puertos)
-    const inventarioRepository = new PostgresInventarioRepository(postgresClient);
+    const inventarioRepository = new MongoInventarioRepository(mongoClient);
     const eventPublisher = redisClient ? new RedisEventPublisher(redisClient) : null;
 
     // Casos de uso (lógica de aplicación)
@@ -72,7 +75,7 @@ class DependencyContainer {
 
     // ==================== MÓDULO PRODUCTO ====================
     // Adaptadores
-    const productoRepository = new PostgresProductoRepository(postgresClient);
+    const productoRepository = new MongoProductoRepository(mongoClient);
 
     // Casos de uso
     const crearProductoUseCase = new CrearProductoUseCase(productoRepository);
@@ -92,7 +95,7 @@ class DependencyContainer {
 
     // ==================== MÓDULO PEDIDO ====================
     // Adaptadores
-    const pedidoRepository = new PostgresPedidoRepository(postgresClient);
+    const pedidoRepository = new MongoPedidoRepository(mongoClient);
 
     // Casos de uso
     const crearPedidoUseCase = new CrearPedidoUseCase(
@@ -118,7 +121,7 @@ class DependencyContainer {
     // Guardar en el contenedor
     this.dependencies = {
       // Infraestructura
-      postgresClient,
+      mongoClient,
       redisClient,
       eventPublisher,
       

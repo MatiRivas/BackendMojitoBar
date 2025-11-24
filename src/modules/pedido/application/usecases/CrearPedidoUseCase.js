@@ -59,6 +59,9 @@ class CrearPedidoUseCase {
         precioUnitario,
         subtotal
       );
+      
+      // Agregar nombre del producto para MongoDB (embebido)
+      detalle.productoNombre = producto.nombre;
 
       detalles.push(detalle);
       totalPedido += subtotal;

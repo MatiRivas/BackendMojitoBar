@@ -35,10 +35,10 @@ class InventarioController {
 
   async obtener(req, res) {
     try {
-      const inventarioId = parseInt(req.params.inventarioId);
+      const inventarioId = req.params.inventarioId;
 
-      if (isNaN(inventarioId)) {
-        return res.status(400).json({ error: 'inventarioId debe ser un número' });
+      if (!inventarioId || inventarioId.trim() === '') {
+        return res.status(400).json({ error: 'inventarioId es requerido' });
       }
 
       const inventario = await this.obtenerInventarioUseCase.execute(inventarioId);
